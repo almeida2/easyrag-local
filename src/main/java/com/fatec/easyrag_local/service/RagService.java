@@ -1,5 +1,7 @@
 package com.fatec.easyrag_local.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -9,8 +11,9 @@ import java.util.stream.Collectors;
 public class RagService {
 
     private final ChatClient chatClient;
-
+    Logger logger = LogManager.getLogger(this.getClass());
     // Base de conhecimento simulada ("Easy RAG" em memória)
+
     private final List<String> baseDeConhecimento = List.of(
             "A empresa XYZ foi fundada em 2010 por dois engenheiros de software em São Paulo.",
             "O produto principal da XYZ se chama CodeMaster, um assistente de IA focado em refatoração de código legado.",
@@ -23,6 +26,8 @@ public class RagService {
     }
 
     public String responderComContexto(String pergunta) {
+        logger.info(">>>>>> rag service - documento indexado");
+        logger.info(">>>>>> rag service - recuperacao documento iniciada: " + pergunta);
         // 1. Fase de Recuperação (Retrieval): Busca simples contendo palavras-chave da
         // pergunta
         String contextoRecuperado = buscarContexto(pergunta);
@@ -52,6 +57,7 @@ public class RagService {
 
     // Mecanismo rudimentar de busca em memória para ilustrar o "Easy RAG"
     private String buscarContexto(String pergunta) {
+        logger.info(">>>>>> rag service - busca por palavra chave iniciada");
         String query = pergunta.toLowerCase();
         List<String> correspondencias = baseDeConhecimento.stream()
                 .filter(doc -> {
